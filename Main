@@ -1,0 +1,56 @@
+import java.util.Scanner;
+
+import Service.HospitalService;
+
+public class main {
+
+	public static void main(String[] args) {
+		
+		  Scanner scanner = new Scanner(System.in);
+	        HospitalService hospitalService = new HospitalService();
+
+	        while (true) {
+	            System.out.println("\nHospital Management System");
+	            System.out.println("1. Add Patient");
+	            System.out.println("2. View Patients");
+	            System.out.println("3. Add Doctor");
+	            System.out.println("4. View Doctors");
+	            System.out.println("5. Schedule Appointment");
+	            System.out.println("6. View Appointments");
+	            System.out.println("7. view Appointments with details");
+	            System.out.println(" 8. Exit");
+	            System.out.print("Choose an option: ");
+	            int choice = scanner.nextInt();
+	            scanner.nextLine();  
+
+	            switch (choice) {
+	                case 1:
+	                    hospitalService.addPatient();
+	                    break;
+	                case 2:
+	                    hospitalService.viewPatients();
+	                    break;
+	                case 3:
+	                    hospitalService.addDoctor();
+	                    break;
+	                case 4:
+                       hospitalService.viewDoctors();
+	                    break; 
+	                case 5:
+	                	hospitalService.scheduleAppointment();
+	                	break;
+	                case 6:
+	                	hospitalService.viewAppointments();
+	                	break;
+	                case 7:
+	                     hospitalService.viewAppointmentsWithDetails();
+	                default:
+	                    System.out.println("Invalid option! Try again.");
+	            }
+	        }
+	    }
+	
+	
+
+	}
+
