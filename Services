@@ -1,0 +1,153 @@
+
+
+
+
+
+
+package Service;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Time;
+import java.util.List;
+import java.util.Scanner;
+
+import Dao.AppointmentDAO;
+import Dao.DatabaseConnection;
+import Dao.DoctorDAO;
+import Dao.PatientDAO;
+import Model.Appointment;
+import Model.Doctor;
+import Model.Patient;
+
+public class HospitalService {
+
+	private Scanner scanner = new Scanner(System.in);
+	private PatientDAO patientDAO = new PatientDAO();
+
+	public void addPatient() {
+		System.out.print("Enter patient name: ");
+		String name = scanner.nextLine();
+		System.out.print("Enter age: ");
+		int age = scanner.nextInt();
+		scanner.nextLine(); 
+		System.out.print("Enter gender: ");
+		String gender = scanner.nextLine();
+		System.out.print("Enter contact: ");
+		int contact = scanner.nextInt();
+		scanner.nextLine();
+		System.out.print("Enter address: ");
+		String address = scanner.nextLine();
+
+		Patient patient = new Patient(name, age, gender, contact, address);
+		patientDAO.addPatient(patient);
+	}
+
+	public void viewPatients() {
+		List<Patient> patients = patientDAO.getAllPatients();
+		if (patients.isEmpty()) {
+			System.out.println("No patients found.");
+		} else {
+			for (Patient patient : patients) {
+				System.out.println(patient);
+			}
+		}
+	}
+
+	private DoctorDAO doctorDAO = new DoctorDAO();
+
+	public void addDoctor() {
+		System.out.print("Enter doctor name: ");
+		String name = scanner.nextLine();
+		System.out.print("Enter specialization: ");
+		String specialization = scanner.nextLine();
+		System.out.print("Enter contact: ");
+		String contact = scanner.nextLine();
+
+		Doctor doctor = new Doctor(name, specialization, contact);
+		doctorDAO.addDoctor(doctor);
+	}
+
+	public void viewDoctors() {
+		List<Doctor> doctors = doctorDAO.getAllDoctors();
+		if (doctors.isEmpty()) {
+			System.out.println("No doctors found.");
+		} else {
+			for (Doctor doctor : doctors) {
+				System.out.println(doctor);
+			}
+		}
+	}
+	
+    private AppointmentDAO appointmentDAO = new AppointmentDAO();
+
+    public void scheduleAppointment() {
+        System.out.print("Enter Patient ID: ");
+        int patientId = scanner.nextInt();
+        System.out.print("Enter Doctor ID: ");
+        int doctorId = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        System.out.print("Enter Appointment Date (YYYY-MM-DD): ");
+        String dateStr = scanner.nextLine();
+        System.out.print("Enter Appointment Time (HH:MM:SS): ");
+        String timeStr = scanner.nextLine();
+
+        Appointment appointment = new Appointment(patientId, doctorId, Date.valueOf(dateStr), Time.valueOf(timeStr));
+        appointmentDAO.scheduleAppointment(appointment);
+    }
+
+    public void viewAppointments() {
+        List<Appointment> appointments = appointmentDAO.getAllAppointments();
+        if (appointments.isEmpty()) {
+            System.out.println("No appointments found.");
+        } else {
+            for (Appointment appointment : appointments) {
+                System.out.println(appointment);
+            }
+        }
+    }
+    
+    public void viewAppointmentsWithDetails() {
+        String query = "SELECT a.id AS appointment_id, p.name AS patient_name, p.age AS patient_age, " +
+                       "p.contact AS patient_contact, d.name AS doctor_name, d.specialization AS doctor_specialization, " +
+                       "a.date AS appointment_date, a.time AS appointment_time " +
+                       "FROM appointments a " +
+                       "JOIN patients p ON a.patient_id = p.id " +
+                       "JOIN doctors d ON a.doctor_id = d.id " +
+                       "ORDER BY a.date, a.time";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(query)) {
+
+            // Print the result header
+            System.out.println("Appointment ID | Patient Name | Patient Age | Patient Contact | Doctor Name | Doctor Specialization | Appointment Date | Appointment Time");
+            System.out.println("----------------------------------------------------------------------------------------");
+
+            // Process the result set
+            while (rs.next()) {
+                int appointmentId = rs.getInt("appointment_id");
+                String patientName = rs.getString("patient_name");
+                int patientAge = rs.getInt("patient_age");
+                String patientContact = rs.getString("patient_contact");
+                String doctorName = rs.getString("doctor_name");
+                String doctorSpecialization = rs.getString("doctor_specialization");
+                Date appointmentDate = rs.getDate("appointment_date");
+                Time appointmentTime = rs.getTime("appointment_time");
+
+                // Print appointment details
+                System.out.printf("%d | %s | %d | %s | %s | %s | %s | %s\n",
+                        appointmentId, patientName, patientAge, patientContact,
+                        doctorName, doctorSpecialization, appointmentDate, appointmentTime);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
