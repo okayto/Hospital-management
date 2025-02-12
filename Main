@@ -1,3 +1,7 @@
+// the Main.java class, which serves as the entry point for the Hospital Management System.
+This class contains the main method where users interact with the system via a simple console menu.
+
+
 import java.util.Scanner;
 
 import Service.HospitalService;
