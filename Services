@@ -1,4 +1,5 @@
-
+// The HospitalService class contains methods to interact with the system, such as adding patients, doctors, and appointments, as well as viewing them.
+It uses the DAO classes to perform database operations.
 
 
 
