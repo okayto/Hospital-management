@@ -1,4 +1,4 @@
-Hospital Management System
+***Hospital Management System***
 
 This is a simple Console-based Hospital Management System built using Core Java and JDBC.
 The system allows you to manage patients, doctors, and appointments.
